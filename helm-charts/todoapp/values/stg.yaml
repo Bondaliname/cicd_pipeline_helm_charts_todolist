@@ -1,10 +1,22 @@
 mysql:
   namespace: mysql-staging
+  secrets:
+    MYSQL_ROOT_PASSWORD: ""
+    MYSQL_USER: ""
+    MYSQL_PASSWORD: ""
 
 todoapp:
-  namespace: todoapp
+  namespace: todoapp-staging
   image:
-    repository: ikulyk404/todoapp
+    repository: alinabondar1818/todolist
+    tag: "2.0.0"
+
+  secrets:
+    SECRET_KEY: ""
+    DB_NAME: ""
+    DB_USER: ""
+    DB_PASSWORD: ""
+    DB_HOST: "mysql.mysql-staging.svc.cluster.local"
 
   resources:
     requests:
