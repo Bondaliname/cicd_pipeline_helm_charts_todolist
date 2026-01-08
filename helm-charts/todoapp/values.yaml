@@ -1,0 +1,40 @@
+mysql:
+  secrets:
+    MYSQL_ROOT_PASSWORD: ""
+    MYSQL_USER: ""
+    MYSQL_PASSWORD: ""
+
+todoapp:
+  namespace: todoapp
+  image:
+    repository: alinabondar1818/todolist
+    tag: "1.0.0"
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "150m"
+    limits:
+      memory: "256Mi"
+      cpu: "150m"
+
+  secrets:
+    SECRET_KEY: ""
+    DB_NAME: ""
+    DB_USER: ""
+    DB_PASSWORD: ""
+    DB_HOST: ""
+
+  hpa:
+    minReplicas: 2
+    maxReplicas: 5
+    cpu:
+      avarageUtilization: 70
+    memory:
+      avarageUtilization: 70
+
+  volumes:
+    persistentVolume:
+      capacity: "1Gi"
+    persistentVolumeClaim:
+      requestStorage: "1Gi"

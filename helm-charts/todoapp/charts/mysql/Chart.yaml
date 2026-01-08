@@ -1,0 +1,6 @@
+apiVersion: v2
+name: mysql
+description: A simple MySQL subchart
+type: application
+version: 0.1.0
+appVersion: "1.16.0"
