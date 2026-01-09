@@ -148,7 +148,7 @@ jobs:
             -f helm-charts/secrets.yaml \
             --create-namespace \
             --wait \
-            --timeout 5m
+            --timeout 10m
 
       - name: Wait for pods to be ready
         run: |
@@ -207,7 +207,7 @@ jobs:
               MYSQL_ROOT_PASSWORD: "${{ secrets.MYSQL_ROOT_PASSWORD_STAGING }}"
               MYSQL_USER: "${{ secrets.MYSQL_USER }}"
               MYSQL_PASSWORD: "${{ secrets.MYSQL_PASSWORD_STAGING }}"
-          
+
           todoapp:
             secrets:
               SECRET_KEY: "${{ secrets.SECRET_KEY_STAGING }}"
@@ -225,7 +225,7 @@ jobs:
             -f helm-charts/secrets-staging.yaml \
             --create-namespace \
             --wait \
-            --timeout 5m
+            --timeout 10m
 
       - name: Wait for pods to be ready
         run: |

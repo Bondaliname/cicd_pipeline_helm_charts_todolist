@@ -1,69 +1,101 @@
-# Django ToDo list - CI/CD Pipeline with Helm Charts & Kubernetes
+# Django ToDo list
 
-This project showcases DevOps best practices for deploying a Django TodoList application with MySQL database to Kubernetes using Helm charts. The pipeline automates testing, validation, and deployment across development and staging environments.
-Live Demo: Docker Hub - todolist:2.0.0
+**CI/CD pipeline** demonstrating automated deployment of a Django **TodoList** application to Kubernetes using **Helm charts** and **GitHub Actions**.
 
-## Pipeline Stages:
+This project showcases **DevOps best practices** and is designed as a **portfolio project**.
 
+---
+
+## Features
+
+* **Automated CI/CD Pipeline** – GitHub Actions workflow with testing and deployment
+* **Kubernetes Deployment** – Uses **Kind (Kubernetes in Docker)** for local testing
+* **Helm Charts** – Declarative infrastructure with **MySQL subchart dependency**
+* **Multi-Environment Support** – Separate **development** and **staging** configurations
+* **Infrastructure as Code** – All Kubernetes resources defined via Helm templates
+* **Automated Testing** – Python unit tests, coverage, and linting
+* **Secret Management** – Secure handling of sensitive data via GitHub Secrets
+
+---
+
+## Architecture
+
+The pipeline consists of **four main stages**:
+
+```
+Push to main branch
+        ↓
 1. Python CI & Tests
-
-Runs on Python 3.9
-Installs dependencies from requirements.txt
-Executes Django unit tests
-Generates code coverage reports
-Performs linting with flake8
-Checks code complexity (max complexity: 6)
-
+   (Unit tests, coverage, linting)
+        ↓
 2. Helm Lint & Package
-
-Updates Helm chart dependencies (MySQL subchart)
-Validates Helm chart syntax and structure
-Templates charts to verify rendering
-Packages charts as .tgz artifacts
-Uploads packaged charts for deployment
-
+   (Chart validation, templating)
+        ↓
 3. Deploy to Development
-
-Creates Kind Kubernetes cluster
-Deploys application using Helm
-Configures MySQL database with persistent storage
-Waits for all pods to be ready
-Runs smoke tests and displays deployment status
-Exposes application on NodePort 30007
-
+   (Kind cluster, Helm install)
+        ↓
 4. Deploy to Staging
+   (Separate Kind cluster)
+```
 
-Creates separate Kind cluster for staging
-Uses staging-specific configuration (stg.yaml)
-Deploys with staging secrets and namespaces
-Validates deployment health
-Runs acceptance tests
+### Components
 
-## Pipeline Triggers:
+* **Django Application** – TodoList REST API (Python 3.9)
+* **MySQL Database** – StatefulSet with persistent storage
+* **Helm Charts** – Main chart with MySQL subchart
+* **GitHub Actions** – Automated CI/CD orchestration
+* **Kind** – Kubernetes clusters for local testing
 
-Push to main: Full pipeline execution
-Pull Request: CI tests only (no deployment)
-Manual: Workflow dispatch option
+---
 
-## Local Setup
+## Running Locally
 
-1. Clone Repository
-Clone this repository
+### Prerequisites
 
+Make sure you have installed:
+
+* Docker Desktop or Docker Engine
+* Kind (Kubernetes in Docker)
+* Helm 3.x
+* kubectl
+* Python 3.9+
+
+---
+
+## Setup Instructions
+
+### Clone the repository
+
+```bash
+git clone https://github.com/Bondaliname/cicd_pipeline_helm_charts_todolist.git
 cd cicd_pipeline_helm_charts_todolist
+```
 
-3. Create Kind Cluster
+---
+
+### Create Kind cluster
+
+```bash
 kind create cluster --name todolist --config cluster.yml
-
 kubectl cluster-info --context kind-todolist
+```
 
-5. Update Helm Dependencies
+---
+
+### Update Helm dependencies
+
+```bash
 cd helm-charts/todoapp
 helm dependency update
 cd ../..
+```
 
-6. Create Secrets File
-bashcat > helm-charts/secrets.yaml <<EOF
+---
+
+### Create secrets file
+
+```bash
+cat > helm-charts/secrets.yaml <<EOF
 mysql:
   secrets:
     MYSQL_ROOT_PASSWORD: "your-root-password"
@@ -78,47 +110,81 @@ todoapp:
     DB_PASSWORD: "your-password"
     DB_HOST: "mysql.mysql.svc.cluster.local"
 EOF
-Never commit secrets.yaml to version control!
+```
 
-5. Deploy to Development
-bashhelm install todoapp helm-charts/todoapp \
+**Important:** Never commit `secrets.yaml` to version control!
+
+---
+
+### Deploy the application
+
+```bash
+helm install todoapp helm-charts/todoapp \
   -f helm-charts/todoapp/values.yaml \
   -f helm-charts/secrets.yaml \
   --create-namespace
-6. Deploy to Staging
-bashhelm install todoapp-staging helm-charts/todoapp \
-  -f helm-charts/todoapp/values.yaml \
-  -f helm-charts/todoapp/values/stg.yaml \
-  -f helm-charts/secrets.yaml \
-  --create-namespace
+```
 
-## GitHub Secrets Configuration
+---
 
-Configure the following secrets in GitHub repository settings (Settings → Secrets and variables → Actions):
-Development Environment:
+## GitHub Actions Setup
 
-MYSQL_ROOT_PASSWORD
+### Required Secrets
 
-MYSQL_USER
+Configure these secrets in your GitHub repository
+**Settings → Secrets and variables → Actions**
 
-MYSQL_PASSWORD
+#### Development Environment
 
-SECRET_KEY
+* MYSQL_ROOT_PASSWORD
+* MYSQL_USER
+* MYSQL_PASSWORD
+* SECRET_KEY
+* DB_NAME
+* DB_USER
+* DB_PASSWORD
+* DB_HOST
 
-DB_NAME
+#### Staging Environment
 
-DB_USER
+* MYSQL_ROOT_PASSWORD_STAGING
+* MYSQL_PASSWORD_STAGING
+* SECRET_KEY_STAGING
+* DB_PASSWORD_STAGING
 
-DB_PASSWORD
+---
 
-DB_HOST
+### Pipeline Triggers
 
-Staging Environment:
+* **Push to `main`** – Runs full pipeline (tests + deployments)
+* **Pull Request** – Runs CI tests only
+* **Manual Trigger** – Via GitHub Actions UI
 
-MYSQL_ROOT_PASSWORD_STAGING
+---
 
-MYSQL_PASSWORD_STAGING
+## Cleanup
 
-SECRET_KEY_STAGING
+### Remove Helm deployments
 
-DB_PASSWORD_STAGING
+```bash
+helm uninstall todoapp -n todoapp
+helm uninstall todoapp-staging -n todoapp-staging
+```
+
+### Delete Kind cluster
+
+```bash
+kind delete cluster --name todolist
+```
+
+### Full cleanup
+
+```bash
+kubectl delete namespace todoapp
+kubectl delete namespace mysql
+kind delete cluster --name todolist
+```
+
+---
+ **Portfolio Project** — Demonstrating DevOps expertise with **CI/CD, Kubernetes, and Helm**
+ 
