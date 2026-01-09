@@ -48,19 +48,21 @@ Manual: Workflow dispatch option
 ## Local Setup
 
 1. Clone Repository
-bashgit clone https://github.com/Bondaliname/cicd_pipeline_helm_charts_todolist.git
+Clone this repository
+
 cd cicd_pipeline_helm_charts_todolist
 
-2. Create Kind Cluster
-bashkind create cluster --name todolist --config cluster.yml
+3. Create Kind Cluster
+kind create cluster --name todolist --config cluster.yml
+
 kubectl cluster-info --context kind-todolist
 
-3. Update Helm Dependencies
-bashcd helm-charts/todoapp
+5. Update Helm Dependencies
+cd helm-charts/todoapp
 helm dependency update
 cd ../..
 
-4. Create Secrets File
+6. Create Secrets File
 bashcat > helm-charts/secrets.yaml <<EOF
 mysql:
   secrets:
@@ -96,17 +98,27 @@ Configure the following secrets in GitHub repository settings (Settings → Secr
 Development Environment:
 
 MYSQL_ROOT_PASSWORD
+
 MYSQL_USER
+
 MYSQL_PASSWORD
+
 SECRET_KEY
+
 DB_NAME
+
 DB_USER
+
 DB_PASSWORD
+
 DB_HOST
 
 Staging Environment:
 
 MYSQL_ROOT_PASSWORD_STAGING
+
 MYSQL_PASSWORD_STAGING
+
 SECRET_KEY_STAGING
+
 DB_PASSWORD_STAGING
