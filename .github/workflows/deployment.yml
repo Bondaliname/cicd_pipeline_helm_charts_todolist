@@ -144,6 +144,7 @@ jobs:
       - name: Deploy to Kind cluster
         run: |
           helm install todoapp helm-charts/todoapp \
+            -n todoapp \
             -f helm-charts/todoapp/values.yaml \
             -f helm-charts/secrets.yaml \
             --create-namespace \
@@ -152,8 +153,11 @@ jobs:
 
       - name: Wait for pods to be ready
         run: |
-          kubectl wait --for=condition=ready pod -l app=mysql -n mysql --timeout=300s
-          kubectl wait --for=condition=ready pod -l app=todoapp -n todoapp --timeout=300s
+          kubectl wait --for=condition=ready pod \
+            --all -n mysql --timeout=600s
+
+          kubectl wait --for=condition=ready pod \
+            --all -n todoapp --timeout=600s
 
       - name: Show deployment status
         run: |
@@ -220,6 +224,7 @@ jobs:
       - name: Deploy to Staging
         run: |
           helm install todoapp-staging helm-charts/todoapp \
+            -n todoapp-staging \
             -f helm-charts/todoapp/values.yaml \
             -f helm-charts/todoapp/values/stg.yaml \
             -f helm-charts/secrets-staging.yaml \
@@ -229,8 +234,11 @@ jobs:
 
       - name: Wait for pods to be ready
         run: |
-          kubectl wait --for=condition=ready pod -l app=mysql -n mysql-staging --timeout=300s
-          kubectl wait --for=condition=ready pod -l app=todoapp -n todoapp-staging --timeout=300s
+          kubectl wait --for=condition=ready pod \
+            --all -n mysql-staging --timeout=600s
+
+          kubectl wait --for=condition=ready pod \
+            --all -n todoapp-staging --timeout=600s
 
       - name: Show staging deployment status
         run: |
